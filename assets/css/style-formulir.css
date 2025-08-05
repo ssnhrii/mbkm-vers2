@@ -1,0 +1,267 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* Layout */
+body {
+  display: flex;
+  background-color: #f2f2f2;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #343a40;
+  color: #fff;
+  padding: 20px;
+  height: 100vh;
+  position: fixed;
+}
+
+.sidebar .logo {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.sidebar .logo img {
+  width: 80%;
+  margin-bottom: 10px;
+}
+
+.sidebar .logo h2 {
+  font-size: 16px;
+  color: #ffdd57;
+}
+
+/* Sidebar Navigation Links */
+.sidebar nav a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  padding: 12px 10px;
+  margin-bottom: 15px;
+  transition: color 0.3s, background-color 0.3s;
+  border-radius: 5px;
+}
+
+/* Tambahan CSS untuk Menu Aktif */
+.sidebar nav a.active {
+  background-color: #1900ff;
+  color: #fff;
+}
+
+/* Ikon untuk Dashboard */
+.sidebar nav a.dashboard .icon {
+  font-size: 20px;
+  margin-right: 10px;
+  flex-shrink: 0;
+  color: #fff;
+}
+
+/* Teks untuk Dashboard */
+.sidebar nav a.dashboard .text {
+  font-size: 15px;
+  color: #fff;
+}
+
+/* Ikon untuk Pengajuan */
+.sidebar nav a.pengajuan .icon {
+  font-size: 20px;
+  margin-right: 13px;
+  margin-left: 4px;
+  flex-shrink: 0;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+}
+
+/* Teks untuk Pengajuan */
+.sidebar nav a.pengajuan .text {
+  font-size: 15px;
+  color: #fff;
+}
+
+/* Ikon untuk Riwayat */
+.sidebar nav a.riwayat .icon {
+  font-size: 20px;
+  margin-right: 13px;
+  margin-left: 4px;
+  flex-shrink: 0;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+}
+
+/* Teks untuk Riwayat */
+.sidebar nav a.riwayat .text {
+  font-size: 15px;
+  color: #fff;
+}
+
+/* Content */
+.content {
+  margin-left: 270px;
+  padding: 20px;
+  width: calc(100% - 270px);
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 15px 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.header h1 {
+  color: #1c68dc;
+  font-size: 1.3em;
+}
+
+/* Profile Icon and Dropdown */
+.user-menu {
+  position: relative;
+}
+
+.profile-icon img {
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+}
+
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  width: 200px;
+  padding: 10px;
+  z-index: 1000;
+}
+
+.dropdown.show {
+  display: block;
+}
+
+.dropdown span {
+  display: block;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+/* Dropdown Buttons with Icons */
+.dropdown button {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border: none;
+  background-color: #333;
+  color: #fff;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 5px;
+  margin-top: 5px;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dropdown button i {
+  font-size: 16px;
+}
+
+.dropdown button:hover {
+  background-color: #1c68dc;
+}
+
+/* Welcome Section */
+.welcome {
+  background-color: #0044cc;
+  color: #fff;
+  padding: 10px;
+  font-size: 18px;
+  text-align: center;
+  margin: 15px 0;
+}
+
+/* Information Section */
+.info {
+  background-color: #ffdd57;
+  color: #333;
+  padding: 10px;
+  font-size: 14px;
+  text-align: center;
+  margin: 10px 0;
+}
+
+.info a {
+  color: #0044cc;
+  text-decoration: underline;
+}
+
+  /* Formulir */
+  form {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #ffffff;
+    border-radius: 8px;
+}
+h1 {
+    text-align: center;
+    font-size: 1.6em;
+    margin-bottom: 20px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+td {
+    padding: 6px;
+    vertical-align: top;
+}
+input[type="text"], input[type="date"], select, textarea {
+    width: calc(100% - 12px);
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+textarea {
+    resize: vertical;
+}
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+}
+.checkbox-group label {
+    width: 50%;
+    margin-bottom: 5px;
+}
+button {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #0056b3;
+}

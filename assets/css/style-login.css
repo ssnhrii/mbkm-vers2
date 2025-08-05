@@ -1,0 +1,68 @@
+body,
+html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Roboto', Arial, sans-serif;
+    background: url('../img/latar-belakang1.jpg') no-repeat center center fixed;
+    background-size: cover;
+}
+
+.overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-container {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.login-container img {
+    width: 200px;
+    margin: 0 auto 20px;
+    display: block;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #6c757d;
+}
+
+.toggle-password:hover {
+    color: #007bff; /* Warna saat hover */
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #6c757d;
+}
+
+.toggle-password:hover {
+    color: #007bff; /* Warna saat hover */
+}

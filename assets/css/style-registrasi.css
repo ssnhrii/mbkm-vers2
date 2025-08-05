@@ -1,0 +1,98 @@
+
+/* Gaya untuk halaman dan background */
+body {
+    background-image: url('../img/latar-belakang1.jpg'); /* Ganti dengan path gambar kampus */
+    background-size: cover;
+    background-position: center;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+/* Tombol Kembali */
+.back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    text-decoration: none;
+    font-size: 16px;
+    color: #000;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.back-button:hover {
+    background-color: rgba(200, 200, 200, 0.7);
+}
+
+/* Kontainer form */
+.form-container {
+    background-color: rgba(255, 255, 255, 0.85); /* Warna putih dengan transparansi */
+    width: 350px;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+/* Gaya untuk logo */
+.logo {
+    width: 150px;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 24px;
+    margin: 0;
+}
+
+label {
+    display: block;
+    text-align: left;
+    font-weight: bold;
+    margin-top: 4px;
+    font-size: 14px;
+}
+
+input[type="text"], input[type="email"], input[type="number"], input[type="password"], textarea, select {
+    width: 90%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Tombol submit */
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #0000ff; /* Warna biru */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #0000cc; /* Biru lebih gelap saat hover */
+}
+
+/* Icon visibility password */
+.password-icon {
+    position: absolute;
+    right: 20px;
+    top: 28px;
+    cursor: pointer;
+}
+
+.input-group {
+    position: relative;
+}

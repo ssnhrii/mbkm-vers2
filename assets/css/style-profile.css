@@ -1,0 +1,67 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #333; /* Sebagai fallback jika gambar tidak ditemukan */
+    background-image: url('../img/latar-belakang1.jpg'); /* Path relatif ke file CSS */
+    background-size: cover; /* Gambar akan memenuhi seluruh layar */
+    background-position: center; /* Gambar dipusatkan */
+    background-repeat: no-repeat; /* Gambar tidak diulang */
+    color: #000; /* Warna teks default */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    background-color: #fff; /* Warna latar belakang untuk kontainer */
+    padding: 20px;
+    border-radius: 10px; /* Membuat sudut melengkung */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Bayangan lembut */
+    width: 90%;
+    max-width: 500px;
+}
+
+.container h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.profile-item label {
+    flex: 1;
+    font-weight: bold;
+}
+
+.profile-item input, .profile-item select {
+    flex: 2;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #e0e0e0;
+}
+
+.profile-item input[readonly], .profile-item select[disabled] {
+    background-color: #e0e0e0;
+}
+
+.edit-button {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.edit-button button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #e0e0e0;
+    cursor: pointer;
+}

@@ -1,0 +1,237 @@
+/* Reset some basic styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body and basic font styling */
+body {
+    height: 100%;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+/* Header styling */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: white;
+    padding: 10px 20px;
+    border-bottom: 2px solid #eee;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logo img {
+    height: 50px;
+}
+
+.menu {
+    display: flex;
+    gap: 20px;
+}
+
+.menu a {
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.menu a:hover {
+    color: #007BFF;
+}
+
+/* Banner section */
+.banner {
+    background-image: url('../img/latar-belakang1.jpg');
+    background-size: cover;
+    background-position: center;
+    color: #ffffff;
+    padding: 400px 20px;
+    text-align: center;
+    font-size: 30px;
+}
+
+/* Section for logos */
+.logos {
+    display: flex;
+    justify-content: center;
+    gap: 120px;
+    padding: 20px;
+}
+
+.logos img {
+    height: 10vh;
+}
+
+.about {
+    background-color: #003399;
+    padding: 100px 20px;
+    text-align: center;
+}
+
+.about h2 {
+    font-size: 30px;
+    color: #fff;
+    margin-bottom: 40px;
+}
+
+.about1 p, .about2 p {
+    font-size: 20px;
+    color: #fff;
+    max-width: 1500px;
+    margin: 0 auto;
+    margin-bottom: 30px;
+}
+
+/* Content sections */
+.container {
+    background-image: url('../img/latar-belakang2.jpg'); /* Replace with your actual background image */
+    background-size: cover;
+    background-position: center;
+    height: 50vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.overlay {
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+    padding: 20px;
+    width: 80%;
+    max-width: 800px;
+    color: white;
+    border-radius: 10px;
+}
+
+.public-info, .complaint-service {
+    margin-bottom: 20px;
+}
+
+.highlight {
+    color: orange;
+}
+
+.contact-btn {
+    display: inline-flex;
+    align-items: center;
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.contact-btn img {
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+}
+
+/* Footer styling */
+footer {
+    background-color: #1414ff;
+    color: #ffffff;
+    text-align: center;
+    padding: 30px;
+    font-size: 15px;
+}
+
+.footer-links {
+    color: #ffffff;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+/* Media Query for Responsiveness */
+@media screen and (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .menu {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .banner {
+        padding: 200px 20px;
+        font-size: 24px;
+    }
+
+    .logos {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .logos img {
+        height: 8vh;
+    }
+
+    .about {
+        padding: 50px 20px;
+    }
+
+    .about h2 {
+        font-size: 24px;
+    }
+
+    .about1 p, .about2 p {
+        font-size: 16px;
+    }
+
+    .container {
+        height: auto;
+        padding: 20px;
+    }
+
+    .overlay {
+        width: 90%;
+    }
+
+    .contact-btn {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+
+    footer {
+        font-size: 12px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .menu a {
+        font-size: 14px;
+    }
+
+    .banner {
+        padding: 150px 10px;
+        font-size: 20px;
+    }
+
+    .logos img {
+        height: 6vh;
+    }
+
+    .about h2 {
+        font-size: 20px;
+    }
+
+    .about1 p, .about2 p {
+        font-size: 14px;
+    }
+
+    .contact-btn {
+        font-size: 12px;
+    }
+
+    footer {
+        font-size: 10px;
+    }
+}

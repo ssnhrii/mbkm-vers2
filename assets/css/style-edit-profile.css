@@ -1,0 +1,81 @@
+/* Background styling with an image */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: url('../img/latar-belakang1.jpg') no-repeat center center fixed; /* Background image */
+    background-size: cover; /* Cover the entire viewport */
+    background-color: #f0f0f0; /* Fallback color */
+}
+
+/* Container styling */
+.container {
+    background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white for readability */
+    width: 90%; /* Default width for smaller screens */
+    max-width: 600px; /* Maximum width for larger screens */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
+}
+
+/* Form layout styling */
+.form-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column; /* Default to column layout for smaller screens */
+}
+
+.input-group label {
+    font-size: 14px;
+    color: #555;
+    text-align: left;
+    margin-bottom: 5px; /* Space between label and input */
+}
+
+.input-group input, 
+.input-group select {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    font-size: 14px;
+}
+
+.save-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    width: 100%; /* Full width for smaller screens */
+    max-width: 200px; /* Limit width for larger screens */
+    margin: 20px auto 0; /* Center the button */
+}
+
+/* Media query for larger screens */
+@media (min-width: 768px) {
+    .input-group {
+        flex-direction: row; /* Align labels and inputs side by side */
+        align-items: center;
+    }
+
+    .input-group label {
+        width: 30%; /* Fixed width for labels */
+        margin-bottom: 0; /* Remove extra space in row layout */
+    }
+
+    .input-group input, 
+    .input-group select {
+        width: 65%; /* Adjust width for inputs */
+    }
+}

@@ -1,0 +1,264 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* Layout */
+body {
+  display: flex;
+  background-color: #f2f2f2;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #343a40;
+  color: #fff;
+  padding: 20px;
+  height: 100vh;
+  position: fixed;
+}
+
+.sidebar .logo {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.sidebar .logo img {
+  width: 80%;
+  margin-bottom: 10px;
+}
+
+.sidebar .logo h2 {
+  font-size: 16px;
+  color: #ffdd57;
+}
+
+/* Sidebar Navigation Links */
+.sidebar nav a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  padding: 10px 15px;
+  margin: 5px 0;
+  transition: color 0.3s, background-color 0.3s;
+  border-radius: 5px;
+}
+
+.sidebar nav a.active {
+  background-color: #1900ff;
+  color: #fff;
+}
+
+/* Ikon dan Teks untuk Dashboard */
+.sidebar nav a.dashboard .icon {
+  font-size: 20px;
+  margin-right: 10px;
+  flex-shrink: 0;
+  color: #fff;
+}
+
+.sidebar nav a.dashboard .text {
+  font-size: 15px;
+  color: #fff;
+}
+
+/* Ikon dan Teks untuk Persetujuan Pengajuan */
+.sidebar nav a.persetujuan.pengajuan .icon {
+  font-size: 18px;
+  margin-right: 10px;
+  color: #fff;
+  position: relative;
+  top: 1px; /* Ikon sedikit lebih tinggi */
+  left: 4px; /* Ikon sedikit ke kiri */
+}
+
+.sidebar nav a.persetujuan.pengajuan .text {
+  font-size: 14px;
+  color: #fff;
+  position: relative;
+  top: 2px; /* Teks sedikit lebih rendah */
+  left: 9px; /* Teks sedikit ke kiri */
+}
+
+/* Ikon dan Teks untuk Rekap Pengajuan */
+.sidebar nav a.rekap.pengajuan {
+  display: flex;
+  align-items: center; /* Ikon dan teks sejajar vertikal */
+  padding: 10px 15px;
+}
+
+.sidebar nav a.rekap.pengajuan .icon {
+  font-size: 18px !important;
+  position: relative !important;
+  left: 4px !important;
+  margin-right: 2px; /* Jarak antara ikon dan teks */
+  color: #fff;
+  top: 1px;
+}
+
+.sidebar nav a.rekap.pengajuan .text {
+  font-size: 15px !important;
+  position: relative;
+  left: 10px;
+  top: 2px;
+  color: #fff;
+}
+
+/* Content */
+.content {
+  margin-left: 270px;
+  padding: 20px;
+  width: calc(100% - 270px);
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 15px 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.header h1 {
+  color: #1c68dc;
+  font-size: 1.3em;
+}
+
+.user-menu {
+  position: relative;
+}
+
+.profile-icon img {
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+}
+
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  width: 200px;
+  padding: 10px;
+  z-index: 1000;
+}
+
+.dropdown.show {
+  display: block;
+}
+
+.dropdown span {
+  display: block;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.dropdown button {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border: none;
+  background-color: #333;
+  color: #fff;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 5px;
+  margin-top: 5px;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dropdown button i {
+  font-size: 16px;
+}
+
+.dropdown button:hover {
+  background-color: #1c68dc;
+}
+
+.welcome {
+  background-color: #0044cc;
+  color: #fff;
+  padding: 10px;
+  font-size: 18px;
+  text-align: center;
+  margin: 15px 0;
+}
+
+.info {
+  background-color: #ffdd57;
+  color: #333;
+  padding: 10px;
+  font-size: 14px;
+  text-align: center;
+  margin: 10px 0;
+}
+
+.info a {
+  color: #0044cc;
+  text-decoration: underline;
+}
+
+.student-data {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.student-data img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  background-color: #ddd;
+}
+
+.student-details {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+}
+
+.student-details h2 {
+  margin-bottom: 15px;
+  font-size: 1.2em;
+  color: #1c68dc;
+}
+
+.details-row {
+  display: grid;
+  grid-template-columns: 150px 10px auto;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.label {
+  font-weight: bold;
+  text-align: left;
+}
+
+.separator {
+  text-align: center;
+}
+
+.value {
+  text-align: left;
+}

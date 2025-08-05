@@ -1,0 +1,8 @@
+# Mengaktifkan rewrite engine
+RewriteEngine On
+
+# Contoh aturan rewrite
+# RewriteRule ^reset-password$ public/reset_password.php [L]
+
+# Mengamankan direktori
+Options -Indexes

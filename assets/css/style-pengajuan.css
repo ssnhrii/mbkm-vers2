@@ -1,0 +1,274 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* Layout */
+body {
+  display: flex;
+  background-color: #f2f2f2;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #343a40;
+  color: #fff;
+  padding: 20px;
+  height: 100vh;
+  position: fixed;
+}
+
+.sidebar .logo {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.sidebar .logo img {
+  width: 80%;
+  margin-bottom: 10px;
+}
+
+.sidebar .logo h2 {
+  font-size: 16px;
+  color: #ffdd57;
+}
+
+/* Sidebar Navigation Links */
+.sidebar nav a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  padding: 12px 10px;
+  margin-bottom: 15px;
+  transition: color 0.3s;
+}
+
+/* Ikon untuk Dashboard */
+.sidebar nav a.dashboard .icon {
+  font-size: 20px; /* Ukuran ikon */
+  margin-right: 10px; /* Jarak ikon dengan teks */
+  flex-shrink: 0; /* Mencegah ikon mengecil */
+  color: #fff;
+}
+
+/* Teks untuk Dashboard */
+.sidebar nav a.dashboard .text {
+  font-size: 15px;
+  color: #fff;
+}
+
+/* Ikon untuk Pengajuan */
+.sidebar nav a.pengajuan .icon {
+  font-size: 20px; /* Ukuran ikon */
+  margin-right: 13px; /* Jarak ikon dengan teks */
+  margin-left: 4px; /* Menambahkan sedikit margin kiri untuk menggeser ikon ke tengah */
+  flex-shrink: 0; /* Mencegah ikon mengecil */
+  color: #fff;
+  display: flex;
+  justify-content: center; /* Pastikan posisi ikonnya tetap teratur */
+}
+
+/* Teks untuk Pengajuan */
+.sidebar nav a.pengajuan .text {
+  font-size: 15px;
+  color: #fff;
+}
+
+/* Hover Efek (Untuk Semua Menu) */
+.sidebar nav a:hover .icon,
+.sidebar nav a:hover .text {
+  color: #ffc107;
+}
+
+/* Content */
+.content {
+  margin-left: 270px;
+  padding: 20px;
+  width: calc(100% - 270px);
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 15px 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.header h1 {
+  color: #1c68dc;
+  font-size: 1.3em;
+}
+
+/* Profile Icon and Dropdown */
+.user-menu {
+  position: relative;
+}
+
+.profile-icon img {
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+}
+
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  width: 200px;
+  padding: 10px;
+  z-index: 1000;
+}
+
+.dropdown.show {
+  display: block;
+}
+
+.dropdown span {
+  display: block;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+/* Dropdown Buttons with Icons */
+.dropdown button {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border: none;
+  background-color: #333;
+  color: #fff;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 5px;
+  margin-top: 5px;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dropdown button i {
+  font-size: 16px;
+}
+
+.dropdown button:hover {
+  background-color: #1c68dc;
+}
+
+/* Welcome Section */
+.welcome {
+  background-color: #0044cc;
+  color: #fff;
+  padding: 10px;
+  font-size: 18px;
+  text-align: center;
+  margin: 15px 0;
+}
+
+/* Information Section */
+.info {
+  background-color: #ffdd57;
+  color: #333;
+  padding: 10px;
+  font-size: 14px;
+  text-align: center;
+  margin: 10px 0;
+}
+
+.info a {
+  color: #0044cc;
+  text-decoration: underline;
+}
+
+/* Student Data */
+.student-data {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.student-data img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  background-color: #ddd;
+}
+
+.student-details {
+  font-size: 16px;
+}
+
+.student-details h2 {
+  margin-bottom: 10px;
+  font-size: 1.2em;
+  color: #333;
+}
+
+.student-details p {
+  margin-bottom: 5px;
+  line-height: 1.6;
+}
+
+.student-details p strong {
+  font-weight: bold;
+}
+
+.container {
+  width: 50%;
+  margin: 50px auto;
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+h2 {
+  text-align: center;
+  color: #333;
+}
+.form-group {
+  margin-bottom: 15px;
+}
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+input[type="submit"] {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 10px 20px;
+}
+input[type="submit"]:hover {
+  background-color: #45a049;
+}
+.form-group textarea {
+  height: 100px;
+}
