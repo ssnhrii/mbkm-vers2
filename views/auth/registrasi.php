@@ -1,368 +1,305 @@
 <?php
-// Koneksi ke database
-include '../../controllers/auth/proses-registrasi.php'; // Pastikan file koneksi.php ada di direktori yang sesuai';
+include '../../controllers/auth/proses-registrasi.php';
 ?>
-
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrasi - Sistem MBKM</title>
-    <link rel="icon" href="../assets/img/favicon.ico" type="image/x-icon">
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registrasi — MBKM Polibatam</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-    <!-- SweetAlert2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.css" rel="stylesheet">
-
-    <style>
-        :root {
-            --primary-color: #3498db;
-            --secondary-color: #2980b9;
-            --accent-color: #e74c3c;
-            --light-color: #ecf0f1;
-            --dark-color: #2c3e50;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .form-container {
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            padding: 2.5rem;
-            width: 100%;
-            max-width: 600px;
-            transition: all 0.3s ease;
-        }
-
-        .form-container:hover {
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-        }
-
-        .logo {
-            max-width: 180px;
-            margin: 0 auto 1.5rem;
-            display: block;
-        }
-
-        .form-control,
-        .form-select {
-            padding: 12px 15px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            transition: all 0.3s;
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-            transition: all 0.3s;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--secondary-color);
-            transform: translateY(-2px);
-        }
-
-        .eye-icon {
-            cursor: pointer;
-            background-color: var(--light-color);
-            border: 1px solid #ddd;
-            border-left: none;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .eye-icon:hover {
-            background-color: #dfe6e9;
-        }
-
-        .input-group-text {
-            background-color: var(--light-color);
-        }
-
-        .text-danger {
-            color: var(--accent-color) !important;
-        }
-
-        .alert {
-            border-radius: 8px;
-        }
-
-        @media (max-width: 768px) {
-            .form-container {
-                padding: 1.5rem;
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f5f3ff',
+                            100: '#e0e7ff',
+                            200: '#ddd6fe',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    }
+                }
             }
+        }
+    </script>
+    
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
         }
     </style>
 </head>
+<body class="min-h-screen bg-slate-50 flex flex-col justify-between p-6 relative overflow-hidden">
+    <!-- Background blurs -->
+    <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-<body>
-    <div class="form-container">
-        <!-- Logo Kampus Merdeka -->
-        <img src="../../assets/img/logo-mbkm.png" alt="Logo MBKM" class="logo">
-        <h2 class="text-center mb-4">Registrasi Akun</h2>
+    <div class="w-full max-w-2xl mx-auto my-auto relative z-10 py-8">
+        <!-- Container card -->
+        <div class="glass-panel rounded-3xl shadow-xl overflow-hidden border border-slate-100">
+            <!-- Accent indicator line -->
+            <div class="h-1.5 bg-gradient-to-r from-brand-500 to-indigo-600"></div>
 
-        <!-- Error Messages -->
-        <?php if (!empty($error_messages)): ?>
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <ul class="mb-0">
-                    <?php foreach ($error_messages as $error): ?>
-                        <li><?php echo htmlspecialchars($error); ?></li>
-                    <?php endforeach; ?>
-                </ul>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        <?php endif; ?>
-
-        <!-- Success Message -->
-        <?php if (!empty($success_message)): ?>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <?php echo htmlspecialchars($success_message); ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        <?php endif; ?>
-
-        <!-- Form Registrasi -->
-        <form action="" method="POST" onsubmit="return validateForm()">
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="nim" class="form-label">NIM/NIP <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="nim_nik" id="nim"
-                        placeholder="Masukkan NIM/NIP" required
-                        value="<?php echo isset($_POST['nim_nik']) ? htmlspecialchars($_POST['nim_nik']) : ''; ?>">
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="username" id="username"
-                        placeholder="Masukkan Username" required
-                        value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>">
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label for="namaLengkap" class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" name="namaLengkap" id="namaLengkap"
-                    placeholder="Masukkan Nama Lengkap" required
-                    value="<?php echo isset($_POST['namaLengkap']) ? htmlspecialchars($_POST['namaLengkap']) : ''; ?>">
-            </div>
-
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="phone" class="form-label">No. Handphone <span class="text-danger">*</span></label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                        <input type="tel" class="form-control" name="phone" id="phone"
-                            placeholder="Masukkan No. Handphone" required
-                            value="<?php echo isset($_POST['phone']) ? htmlspecialchars($_POST['phone']) : ''; ?>">
+            <div class="p-8 sm:p-10">
+                <!-- Branding logo + title -->
+                <div class="flex flex-col items-center mb-8">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center shadow-lg shadow-brand-500/25 mb-4">
+                        <i class="fas fa-user-plus text-white text-lg"></i>
                     </div>
+                    <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Daftar Akun Baru</h1>
+                    <p class="text-xs font-semibold text-slate-400 mt-1 uppercase tracking-wider">Silakan lengkapi formulir pendaftaran Anda</p>
                 </div>
 
-                <div class="col-md-6 mb-3">
-                    <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                        <input type="email" class="form-control" name="email" id="email"
-                            placeholder="Masukkan Email" required
-                            value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
+                <!-- Registration Form -->
+                <form method="POST" action="" id="regForm" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- NIM/NIK -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">NIM / NIK <span class="text-red-500">*</span></label>
+                            <input type="text" name="nim_nik" placeholder="Masukkan NIM atau NIK" required
+                                value="<?= isset($_POST['nim_nik']) ? htmlspecialchars($_POST['nim_nik']) : '' ?>"
+                                class="w-full px-4 py-2.5 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white/70 transition-all duration-200">
+                        </div>
+                        <!-- Username -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Username <span class="text-red-500">*</span></label>
+                            <input type="text" name="username" placeholder="Buat username unik" required
+                                value="<?= isset($_POST['username']) ? htmlspecialchars($_POST['username']) : '' ?>"
+                                class="w-full px-4 py-2.5 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white/70 transition-all duration-200">
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            <div class="mb-3">
-                <label for="alamat" class="form-label">Alamat <span class="text-danger">*</span></label>
-                <textarea class="form-control" name="alamat" id="alamat" rows="2"
-                    placeholder="Masukkan Alamat" required><?php echo isset($_POST['alamat']) ? htmlspecialchars($_POST['alamat']) : ''; ?></textarea>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="jurusan" class="form-label">Jurusan <span class="text-danger">*</span></label>
-                    <select class="form-select" name="jurusan" id="jurusan" required onchange="updateProdi()">
-                        <option value="" selected disabled>Pilih Jurusan</option>
-                        <?php while ($jurusan = mysqli_fetch_assoc($result_all_jurusan)): ?>
-                            <option value="<?= $jurusan['id_jurusan'] ?>"
-                                <?= (isset($_POST['jurusan']) && $_POST['jurusan'] == $jurusan['id_jurusan']) ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($jurusan['nama_jurusan']) ?>
-                            </option>
-                        <?php endwhile; ?>
-                    </select>
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label for="prodi" class="form-label">Program Studi <span class="text-danger">*</span></label>
-                    <select class="form-select" name="prodi" id="prodi" required disabled>
-                        <option value="" selected disabled>Pilih Jurusan terlebih dahulu</option>
-                        <?php if (isset($_POST['jurusan']) && !empty($_POST['jurusan'])): ?>
-                            <?php foreach ($prodi_options[$_POST['jurusan']] as $prodi): ?>
-                                <option value="<?= $prodi['id_prodi'] ?>"
-                                    <?= (isset($_POST['prodi']) && $_POST['prodi'] == $prodi['id_prodi']) ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($prodi['nama_prodi']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </select>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
-                    <div class="input-group">
-                        <input type="password" class="form-control" name="password" id="password"
-                            placeholder="Masukkan Password" required>
-                        <span class="input-group-text eye-icon" onclick="togglePassword('password', this)">
-                            <i class="fas fa-eye"></i>
-                        </span>
+                    <!-- Nama Lengkap -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
+                        <input type="text" name="namaLengkap" placeholder="Masukkan nama lengkap sesuai identitas" required
+                            value="<?= isset($_POST['namaLengkap']) ? htmlspecialchars($_POST['namaLengkap']) : '' ?>"
+                            class="w-full px-4 py-2.5 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white/70 transition-all duration-200">
                     </div>
-                    <div class="form-text">Minimal 8 karakter</div>
-                </div>
 
-                <div class="col-md-6 mb-3">
-                    <label for="confirm-password" class="form-label">Konfirmasi Password <span class="text-danger">*</span></label>
-                    <div class="input-group">
-                        <input type="password" class="form-control" name="confirm-password" id="confirm-password"
-                            placeholder="Konfirmasi Password" required>
-                        <span class="input-group-text eye-icon" onclick="togglePassword('confirm-password', this)">
-                            <i class="fas fa-eye"></i>
-                        </span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- No HP -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">No. Handphone <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400"><i class="fas fa-phone text-sm"></i></span>
+                                <input type="tel" name="phone" placeholder="08xxxxxxxxxx" required
+                                    value="<?= isset($_POST['phone']) ? htmlspecialchars($_POST['phone']) : '' ?>"
+                                    class="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white/70 transition-all duration-200">
+                            </div>
+                        </div>
+                        <!-- Email -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Email <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400"><i class="fas fa-envelope text-sm"></i></span>
+                                <input type="email" name="email" placeholder="email@example.com" required
+                                    value="<?= isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>"
+                                    class="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white/70 transition-all duration-200">
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Alamat -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Alamat <span class="text-red-500">*</span></label>
+                        <textarea name="alamat" rows="2" placeholder="Masukkan alamat lengkap tinggal saat ini" required
+                            class="w-full px-4 py-2.5 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white/70 transition-all duration-200 resize-none"><?= isset($_POST['alamat']) ? htmlspecialchars($_POST['alamat']) : '' ?></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Jurusan -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Jurusan <span class="text-red-500">*</span></label>
+                            <select name="jurusan" id="jurusan" required onchange="updateProdi()"
+                                class="w-full px-4 py-2.5 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white/70 transition-all duration-200 bg-[image:none] cursor-pointer">
+                                <option value="" disabled selected>Pilih Jurusan Anda</option>
+                                <?php while ($j = mysqli_fetch_assoc($result_all_jurusan)): ?>
+                                    <option value="<?= $j['id_jurusan'] ?>"
+                                        <?= (isset($_POST['jurusan']) && $_POST['jurusan'] == $j['id_jurusan']) ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($j['nama_jurusan']) ?>
+                                    </option>
+                                <?php endwhile; ?>
+                            </select>
+                        </div>
+                        <!-- Prodi -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Program Studi <span class="text-red-500">*</span></label>
+                            <select name="prodi" id="prodi" required disabled
+                                class="w-full px-4 py-2.5 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white/70 transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400 cursor-pointer">
+                                <option value="" disabled selected>Pilih Jurusan Terlebih Dahulu</option>
+                                <?php if (isset($_POST['jurusan']) && !empty($_POST['jurusan'])): ?>
+                                    <?php foreach ($prodi_options[$_POST['jurusan']] as $p): ?>
+                                        <option value="<?= $p['id_prodi'] ?>"
+                                            <?= (isset($_POST['prodi']) && $_POST['prodi'] == $p['id_prodi']) ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($p['nama_prodi']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Password -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Password <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <input type="password" name="password" id="password" placeholder="Minimal 8 karakter" required
+                                    class="w-full pl-4 pr-11 py-2.5 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white/70 transition-all duration-200">
+                                <button type="button" onclick="togglePwd('password','icon1')" tabindex="-1"
+                                    class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 transition">
+                                    <i class="fas fa-eye text-sm" id="icon1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Konfirmasi Password -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Konfirmasi Password <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <input type="password" name="confirm-password" id="confirm-password" placeholder="Ulangi password Anda" required
+                                    class="w-full pl-4 pr-11 py-2.5 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white/70 transition-all duration-200">
+                                <button type="button" onclick="togglePwd('confirm-password','icon2')" tabindex="-1"
+                                    class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 transition">
+                                    <i class="fas fa-eye text-sm" id="icon2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" name="submit"
+                        class="w-full bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white font-bold py-3 px-4 rounded-2xl text-sm shadow-lg shadow-brand-500/20 hover:shadow-brand-500/25 transition duration-200 flex items-center justify-center gap-2 transform hover:-translate-y-0.5 mt-2">
+                        <i class="fas fa-user-plus text-sm"></i> Daftar Akun Baru
+                    </button>
+                </form>
+
+                <!-- Existing Account Footer -->
+                <div class="text-center mt-6 pt-5 border-t border-slate-200/50">
+                    <p class="text-sm text-slate-400 font-semibold">
+                        Sudah terdaftar?
+                        <a href="login.php" class="text-brand-600 font-bold hover:underline ml-1">Masuk Sekarang</a>
+                    </p>
                 </div>
             </div>
-
-            <div id="password-error" class="alert alert-danger mb-3" style="display: none;"></div>
-
-            <button type="submit" name="submit" class="btn btn-primary w-100 mt-3">
-                <i class="fas fa-user-plus me-2"></i>Daftar
-            </button>
-
-            <div class="text-center mt-3">
-                Sudah punya akun? <a href="login.php" class="text-primary">Login disini</a>
-            </div>
-        </form>
+        </div>
     </div>
 
-    <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- SweetAlert2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.js"></script>
+    <!-- Small copyleft banner at bottom -->
+    <div class="text-center relative z-10 mt-4">
+        <p class="text-xs font-semibold text-slate-400">
+            &copy; <?= date('Y') ?> Politeknik Negeri Batam. All Rights Reserved.
+        </p>
+    </div>
 
     <script>
-        // Data prodi yang dikonversi dari PHP ke JavaScript
-        const prodiData = <?php echo $prodi_options_json; ?>;
+        const prodiData = <?= $prodi_options_json ?? '{}' ?>;
 
-        function togglePassword(fieldId, icon) {
-            const field = document.getElementById(fieldId);
-            const isPassword = field.type === 'password';
-            field.type = isPassword ? 'text' : 'password';
-            icon.querySelector('i').classList.toggle('fa-eye');
-            icon.querySelector('i').classList.toggle('fa-eye-slash');
+        function togglePwd(fieldId, iconId) {
+            const f = document.getElementById(fieldId);
+            const i = document.getElementById(iconId);
+            if (f.type === 'password') { 
+                f.type = 'text'; 
+                i.classList.replace('fa-eye','fa-eye-slash'); 
+            } else { 
+                f.type = 'password'; 
+                i.classList.replace('fa-eye-slash','fa-eye'); 
+            }
         }
 
-        function validateForm() {
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-            const errorDiv = document.getElementById('password-error');
-
-            // Reset error display
-            errorDiv.style.display = 'none';
-            errorDiv.innerHTML = '';
-
-            // Check password match
-            if (password !== confirmPassword) {
-                errorDiv.innerHTML = 'Password dan Konfirmasi Password tidak sesuai';
-                errorDiv.style.display = 'block';
-                return false;
-            }
-
-            // Check password length
-            if (password.length < 8) {
-                errorDiv.innerHTML = 'Password harus minimal 8 karakter';
-                errorDiv.style.display = 'block';
-                return false;
-            }
-
-            return true;
-        }
-
-        // Fungsi untuk mengupdate prodi berdasarkan jurusan yang dipilih
         function updateProdi() {
-            const jurusanSelect = document.getElementById('jurusan');
-            const prodiSelect = document.getElementById('prodi');
-            const selectedJurusan = jurusanSelect.value;
-            
-            // Reset prodi select
-            prodiSelect.innerHTML = '<option value="" selected disabled>Pilih Program Studi</option>';
-            prodiSelect.disabled = !selectedJurusan;
-            
-            if (!selectedJurusan) return;
-            
-            // Isi opsi prodi berdasarkan jurusan yang dipilih
-            if (prodiData[selectedJurusan]) {
-                prodiData[selectedJurusan].forEach(prodi => {
-                    const option = document.createElement('option');
-                    option.value = prodi.id_prodi;
-                    option.textContent = prodi.nama_prodi;
-                    prodiSelect.appendChild(option);
+            const jId = document.getElementById('jurusan').value;
+            const pSel = document.getElementById('prodi');
+            pSel.innerHTML = '<option value="" disabled selected>Pilih Program Studi</option>';
+            pSel.disabled = !jId;
+            if (jId && prodiData[jId]) {
+                prodiData[jId].forEach(p => {
+                    const o = document.createElement('option');
+                    o.value = p.id_prodi; o.textContent = p.nama_prodi;
+                    pSel.appendChild(o);
                 });
             }
-            
-            // Jika ada nilai yang dipilih sebelumnya, set ulang
-            <?php if (isset($_POST['prodi']) && !empty($_POST['prodi'])): ?>
-                if (document.querySelector(`#prodi option[value="<?= $_POST['prodi'] ?>"]`)) {
-                    prodiSelect.value = "<?= $_POST['prodi'] ?>";
-                }
-            <?php endif; ?>
         }
 
-        // Panggil fungsi updateProdi saat halaman dimuat jika jurusan sudah dipilih sebelumnya
-        document.addEventListener('DOMContentLoaded', function() {
-            if (document.getElementById('jurusan').value) {
-                updateProdi();
+        document.addEventListener('DOMContentLoaded', () => {
+            if (document.getElementById('jurusan').value) updateProdi();
+        });
+
+        document.getElementById('regForm').addEventListener('submit', function(e) {
+            const pwd = document.getElementById('password').value;
+            const cpwd = document.getElementById('confirm-password').value;
+            if (pwd !== cpwd) {
+                e.preventDefault();
+                Swal.fire({ 
+                    title: 'Password Tidak Cocok', 
+                    text: 'Password dan konfirmasi password harus sama.', 
+                    icon: 'error', 
+                    confirmButtonColor: '#4f46e5',
+                    customClass: {
+                        popup: 'rounded-3xl'
+                    }
+                });
+                return;
+            }
+            if (pwd.length < 8) {
+                e.preventDefault();
+                Swal.fire({ 
+                    title: 'Password Terlalu Pendek', 
+                    text: 'Password minimal harus 8 karakter.', 
+                    icon: 'warning', 
+                    confirmButtonColor: '#4f46e5',
+                    customClass: {
+                        popup: 'rounded-3xl'
+                    }
+                });
             }
         });
 
-        // Show success message if registration was successful
+        <?php if (!empty($error_messages)): ?>
+        Swal.fire({
+            title: 'Registrasi Gagal',
+            html: '<ul class="text-left text-xs space-y-1"><?php foreach ($error_messages as $e): ?><li>• <?= addslashes(htmlspecialchars($e)) ?></li><?php endforeach; ?></ul>',
+            icon: 'error',
+            confirmButtonColor: '#4f46e5',
+            customClass: {
+                popup: 'rounded-3xl'
+            }
+        });
+        <?php endif; ?>
+
         <?php if (!empty($success_message)): ?>
-            document.addEventListener('DOMContentLoaded', function() {
-                Swal.fire({
-                    title: 'Sukses!',
-                    text: '<?php echo addslashes($success_message); ?>',
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    window.location.href = 'login.php';
-                });
-            });
+        Swal.fire({
+            title: 'Registrasi Berhasil!',
+            text: '<?= addslashes(htmlspecialchars($success_message)) ?>',
+            icon: 'success',
+            confirmButtonColor: '#4f46e5',
+            customClass: {
+                popup: 'rounded-3xl'
+            }
+        }).then(() => { window.location.href = 'login.php'; });
         <?php endif; ?>
     </script>
 </body>

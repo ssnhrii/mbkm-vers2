@@ -10,13 +10,13 @@ include 'koneksi.php';
 // Periksa apakah pengguna sudah login
 if (!isset($_SESSION['username'])) {
     // Jika belum login, arahkan ke halaman login
-    header("Location: login.php");
+    header("Location: ../views/auth/login.php");
     exit;
 }
 
 // Ambil data mahasiswa dari database
 $username = $_SESSION['username'];
-$query = "SELECT nim_nik, username, nama_lengkap, email, no_handphone, alamat, id_prodi, role FROM users WHERE username = ?";
+$query = "SELECT nim_nik, username, nama_lengkap, email, phone, alamat, id_prodi, role FROM users WHERE username = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("s", $username);
 $stmt->execute();
@@ -38,7 +38,7 @@ if ($data) {
     }
 } else {
     // Jika data tidak ditemukan, arahkan ke halaman error
-    header("Location: error.php");
+    header("Location: ../views/auth/login.php");
     exit;
 }
 ?>

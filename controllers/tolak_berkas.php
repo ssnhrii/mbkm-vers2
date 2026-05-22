@@ -18,7 +18,8 @@ function tolakPengajuan($id_pengajuan, $nim_nik, $comment)
         $update_stmt->bind_param("ss", $id_komentar, $id_pengajuan);
 
         if ($update_stmt->execute()) {
-            echo "Location: ../view/persetujuan-pengajuan.php";
+            header("Location: ../views/dosen/persetujuan-pengajuan.php");
+            exit();
         } else {
             echo "Error mengupdate pengajuan: " . $update_stmt->error;
         }

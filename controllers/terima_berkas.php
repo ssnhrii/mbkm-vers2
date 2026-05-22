@@ -13,7 +13,7 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $id_pengajuan);
 
 if ($stmt->execute()) {
-    header("Location: ../view/persetujuan-pengajuan.php");
+    header("Location: ../views/dosen/persetujuan-pengajuan.php");
     exit();
 } else {
     echo "Terjadi kesalahan saat menyimpan data: " . $stmt->error;

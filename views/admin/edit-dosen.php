@@ -1,188 +1,165 @@
 <?php
-include("../function/koneksi.php");
-
-// Pastikan koneksi berhasil
-if ($conn->connect_error) {
-    die("Koneksi gagal: " . $conn->connect_error);
+session_start();
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Admin') {
+    header('Location: ../auth/login.php'); exit();
 }
+include '../../controllers/koneksi.php';
+include '../../controllers/proses-dashboard.php';
 
 if (!isset($_GET['nim_nik'])) {
-    echo "  <script>
-                    alert('NIM/NIK tidak ditemukan!');
-                    window.location.href='data-dosen.php';
-                </script>";
-    exit;
+    header('Location: data-dosen.php'); exit();
 }
 
-$nim_nik = $conn->real_escape_string($_GET['nim_nik']);
-$dosen = null;
+$nim_nik = $_GET['nim_nik'];
+$stmt = $conn->prepare("SELECT * FROM users WHERE nim_nik = ? AND role = 'dosen'");
+$stmt->bind_param('s', $nim_nik);
+$stmt->execute();
+$dosen = $stmt->get_result()->fetch_assoc();
 
-$sql = "SELECT * FROM users WHERE nim_nik = '$nim_nik' AND role = 'dosen'";
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-    $dosen = $result->fetch_assoc();
-} else {
-    echo "<script>alert('Data dosen tidak ditemukan!');window.location.href='data-dosen.php';</script>";
-    exit;
+if (!$dosen) {
+    header('Location: data-dosen.php'); exit();
 }
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // Ambil data dari form
-    $nama_lengkap = $conn->real_escape_string($_POST['namaLengkap']);
-    // $nim_nik = $conn->real_escape_string($_POST['nim_nik']);
-    $id_prodi = isset($_POST['id_prodi']) ? $conn->real_escape_string($_POST['id_prodi']) : null;
-    $email = $conn->real_escape_string($_POST['email']);
-    $alamat = $conn->real_escape_string($_POST['alamat']);
-    $no_handphone = $conn->real_escape_string($_POST['phone']);
-    $role = "dosen";
-    $username = $conn->real_escape_string($_POST['username'] ?? $nim_nik);
+$formError = '';
+$formSuccess = '';
 
-    // Validasi input
-    if (empty($id_prodi)) {
-        echo "<script>alert('Prodi harus dipilih!');window.history.back();</script>";
-        exit;
-    }
-    if (empty($username)) {
-        echo "<script>alert('Username tidak boleh kosong!');window.history.back();</script>";
-        exit;
-    }
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nama_lengkap = trim($_POST['namaLengkap'] ?? '');
+    $id_prodi     = trim($_POST['id_prodi'] ?? '');
+    $email        = trim($_POST['email'] ?? '');
+    $alamat       = trim($_POST['alamat'] ?? '');
+    $phone = trim($_POST['phone'] ?? '');
+    $username     = trim($_POST['username'] ?? '');
 
-    $sql = "UPDATE users 
-            SET nama_lengkap = '$nama_lengkap', id_prodi = '$id_prodi', email = '$email', alamat = '$alamat', 
-                no_handphone = '$no_handphone', username = '$username'
-            WHERE nim_nik = '$nim_nik' AND role = 'dosen'";
-
-    if ($conn->query($sql) === TRUE) {
-        echo "<script>alert('Data berhasil disimpan!');window.location.href='data-dosen.php';</script>";
+    if (empty($id_prodi) || empty($username) || empty($nama_lengkap)) {
+        $formError = 'Semua field wajib harus diisi.';
     } else {
-        echo "SQL Error: " . $conn->error;
+        $upd = $conn->prepare("UPDATE users SET nama_lengkap=?, id_prodi=?, email=?, alamat=?, phone=?, username=? WHERE nim_nik=? AND role='dosen'");
+        $upd->bind_param('sssssss', $nama_lengkap, $id_prodi, $email, $alamat, $phone, $username, $nim_nik);
+        if ($upd->execute()) {
+            $formSuccess = 'Data dosen berhasil diperbarui.';
+            // Refresh dosen data
+            $stmt->execute();
+            $dosen = $stmt->get_result()->fetch_assoc();
+        } else {
+            $formError = 'Gagal memperbarui data: ' . $conn->error;
+        }
     }
 }
-?>
 
+$pageTitle = 'Edit Dosen';
+$activePage = 'manajemen';
+$profileUrl = '../profil/profile.php';
+$changePasswordUrl = 'change-password.php?data=' . ($data['nim_nik'] ?? '');
+?>
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Dosen</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style-data-dosen.css">
+    <?php include '../partials/page-head.php'; ?>
 </head>
+<body class="bg-gray-100 min-h-screen">
+<div class="flex min-h-screen">
+    <?php include '../partials/sidebar-admin.php'; ?>
 
-<body>
-    <div class="container-fluid p-0">
-        <div class="row m-0">
-            <!-- Sidebar -->
-            <div class="col-lg-2 bg-dark text-white p-3 vh-100">
-                <div class="text-center my-3">
-                    <img src="../assets/img/logo MBKM.png" alt="Logo" class="img-fluid" style="max-width: 120px;">
+    <div class="flex-1 flex flex-col lg:ml-64 min-h-screen">
+        <?php include '../partials/header.php'; ?>
+
+        <main class="flex-1 p-6">
+            <div class="max-w-2xl mx-auto">
+                <div class="flex items-center gap-2 text-sm text-gray-500 mb-4">
+                    <a href="data-dosen.php" class="hover:text-emerald-600 transition">Manajemen User</a>
+                    <i class="fas fa-chevron-right text-xs"></i>
+                    <span class="text-gray-800 font-medium">Edit Dosen</span>
                 </div>
-                <nav class="nav flex-column">
-                    <a href="dashboard-admin.php" class="nav-link text-white mb-2">
-                        <i class="fas fa-home me-2"></i> DASHBOARD
-                    </a>
-                    <a href="data-dosen.php" class="nav-link text-white active">
-                        <i class="fas fa-file-alt me-2"></i> MANAJEMEN USER
-                    </a>
-                </nav>
-            </div>
-            <div class="col-lg-10 p-4">
-                <div class="d-flex justify-content-between align-items-center mb-3 header">
-                    <h3>Edit Dosen</h3>
-                    <!-- Profil Dropdown -->
-                    <div class="user-menu">
-                        <!-- Profile Icon -->
-                        <div class="profile-icon" onclick="toggleDropdown()">
-                            <img src="../assets/img/icon.jpg" alt="Profile Icon" />
-                        </div>
-                        <!-- Dropdown Menu -->
-                        <div class="dropdown" id="dropdownMenu">
-                            <span><br />Nama: <?php echo $data['nama_lengkap']; ?></span>
-                            <a href="profile.php"><button><i class="fas fa-user"></i> Profile</button></a>
-                            <a href='change-password.php?data=<?php echo $data['nim_nik'] ?>'
-                                class='btn btn-light btn-sm'><i class='fas fa-key'></i> Change Password</a>
-                            <a href="../function/logout.php"><button><i class="fas fa-sign-out-alt"></i>
-                                    Logout</button></a>
-                        </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="bg-emerald-50 border-b border-emerald-100 px-6 py-4">
+                        <h2 class="text-lg font-bold text-gray-800">Edit Data Dosen</h2>
+                        <p class="text-sm text-gray-500 mt-0.5">NIK: <span class="font-mono font-medium"><?= htmlspecialchars($dosen['nim_nik']) ?></span></p>
                     </div>
-                </div>
-                <!-- Form Edit Dosen -->
-                <div class="card shadow-sm p-4">
-                    <form method="POST" action="">
-                        <div class="mb-3">
-                            <label for="namaLengkap" class="form-label">Nama Lengkap</label>
-                            <input type="text" class="form-control" name="namaLengkap" id="namaLengkap"
-                                placeholder="Masukkan Nama Lengkap"
-                                value="<?= htmlspecialchars($dosen['nama_lengkap']) ?>" required>
+
+                    <form method="POST" action="" class="p-6 space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Lengkap <span class="text-red-500">*</span></label>
+                                <input type="text" name="namaLengkap" value="<?= htmlspecialchars($dosen['nama_lengkap']) ?>" required
+                                    class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">NIM / NIK</label>
+                                <input type="text" value="<?= htmlspecialchars($dosen['nim_nik']) ?>" readonly
+                                    class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-500 cursor-not-allowed">
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="nim_nik" class="form-label">NIM/NIK</label>
-                            <input type="text" class="form-control" id="nim_nik"
-                                value="<?= htmlspecialchars($dosen['nim_nik']) ?>" readonly>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Username <span class="text-red-500">*</span></label>
+                                <input type="text" name="username" value="<?= htmlspecialchars($dosen['username']) ?>" required
+                                    class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Program Studi <span class="text-red-500">*</span></label>
+                                <select name="id_prodi" required
+                                    class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition bg-white">
+                                    <option value="">Pilih Prodi</option>
+                                    <?php
+                                    $rp = $conn->query("SELECT id_prodi, nama_prodi FROM prodi");
+                                    while ($p = $rp->fetch_assoc()):
+                                    ?>
+                                    <option value="<?= $p['id_prodi'] ?>" <?= $dosen['id_prodi'] == $p['id_prodi'] ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($p['nama_prodi']) ?>
+                                    </option>
+                                    <?php endwhile; ?>
+                                </select>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="id_prodi" class="form-label">Prodi</label>
-                            <select class="form-select" name="id_prodi" id="id_prodi" required>
-                                <option value="">Pilih Prodi</option>
-                                <?php
-                                $prodiResult = $conn->query("SELECT * FROM prodi");
-                                while ($prodi = $prodiResult->fetch_assoc()) {
-                                    $selected = $dosen['id_prodi'] == $prodi['id_prodi'] ? 'selected' : '';
-                                    echo "<option value='" . $prodi['id_prodi'] . "' $selected>" . htmlspecialchars($prodi['nama_prodi']) . "</option>";
-                                }
-                                ?>
-                            </select>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Email <span class="text-red-500">*</span></label>
+                                <input type="email" name="email" value="<?= htmlspecialchars($dosen['email']) ?>" required
+                                    class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">No. Handphone <span class="text-red-500">*</span></label>
+                                <input type="tel" name="phone" value="<?= htmlspecialchars($dosen['phone']) ?>" required
+                                    class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition">
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" name="email" id="email"
-                                value="<?= htmlspecialchars($dosen['email']) ?>" required>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Alamat <span class="text-red-500">*</span></label>
+                            <textarea name="alamat" rows="2" required
+                                class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition resize-none"><?= htmlspecialchars($dosen['alamat']) ?></textarea>
                         </div>
-                        <div class="mb-3">
-                            <label for="alamat" class="form-label">Alamat</label>
-                            <textarea class="form-control" name="alamat" id="alamat"
-                                required><?= htmlspecialchars($dosen['alamat']) ?></textarea>
+
+                        <div class="flex gap-3 pt-2">
+                            <button type="submit"
+                                class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-lg text-sm transition flex items-center justify-center gap-2">
+                                <i class="fas fa-save"></i> Simpan Perubahan
+                            </button>
+                            <a href="data-dosen.php"
+                                class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-lg text-sm transition flex items-center justify-center gap-2">
+                                <i class="fas fa-arrow-left"></i> Kembali
+                            </a>
                         </div>
-                        <div class="mb-3">
-                            <label for="phone" class="form-label">No. Handphone</label>
-                            <input type="text" class="form-control" name="phone" id="phone"
-                                value="<?= htmlspecialchars($dosen['no_handphone']) ?>" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" name="username" id="username"
-                                value="<?= htmlspecialchars($dosen['username']) ?>" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Simpan</button>
                     </form>
                 </div>
             </div>
-        </div>
+        </main>
     </div>
+</div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Fungsi untuk toggle menu dropdown
-        function toggleDropdown() {
-            const dropdown = document.getElementById("dropdownMenu");
-            dropdown.classList.toggle("show");
-        }
-
-        // Menutup dropdown jika klik di luar elemen
-        window.onclick = function (event) {
-            if (!event.target.closest(".profile-icon") && !event.target.closest("#dropdownMenu")) {
-                const dropdown = document.getElementById("dropdownMenu");
-                if (dropdown && dropdown.classList.contains("show")) {
-                    dropdown.classList.remove("show");
-                }
-            }
-        };
-    </script>
+<script>
+<?php if ($formError): ?>
+Swal.fire({ title: 'Gagal!', text: '<?= addslashes(htmlspecialchars($formError)) ?>', icon: 'error', confirmButtonColor: '#10b981' });
+<?php endif; ?>
+<?php if ($formSuccess): ?>
+Swal.fire({ title: 'Berhasil!', text: '<?= addslashes(htmlspecialchars($formSuccess)) ?>', icon: 'success', confirmButtonColor: '#10b981' })
+    .then(() => { window.location.href = 'data-dosen.php'; });
+<?php endif; ?>
+</script>
 </body>
-
 </html>
+

@@ -1,168 +1,122 @@
 <?php
-// Koneksi ke database
-include '../function/koneksi.php'; // Pastikan file koneksi.php ada di direktori yang sesuai';
-
 session_start();
-if (!isset($_SESSION['username'])) {
-    header('Location: login.php');
-    exit();
-}
+include '../../controllers/koneksi.php';
+if (!isset($_SESSION['username'])) { header('Location: ../auth/login.php'); exit(); }
 
-$update_success = false;
-$update_error = false;
+$nim_nik = $_GET['data'] ?? '';
+$formError = '';
+$formSuccess = '';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $old_password = $_POST['oldpassword'];
-    $new_password = $_POST['newpassword'];
-    $confirm_new_password = $_POST['confirmnewpassword'];
-    
-    if (isset($_GET['data'])) {
-        $nim_nik = $_GET['data'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $oldPwd  = $_POST['oldpassword'] ?? '';
+    $newPwd  = $_POST['newpassword'] ?? '';
+    $confPwd = $_POST['confirmnewpassword'] ?? '';
+
+    if ($newPwd !== $confPwd) {
+        $formError = 'Konfirmasi password baru tidak cocok.';
+    } elseif (strlen($newPwd) < 8) {
+        $formError = 'Password baru minimal 8 karakter.';
     } else {
-        $update_error = true;
-        $error_message = "NIM/NIK tidak ditemukan.";
-    }
-
-    if ($new_password !== $confirm_new_password) {
-        $update_error = true;
-        $error_message = "Konfirmasi password baru tidak cocok.";
-    }
-
-    if (!$update_error) {
-        $query = "SELECT password FROM users WHERE nim_nik = ?";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("s", $nim_nik);
+        $stmt = $conn->prepare("SELECT password FROM users WHERE nim_nik = ?");
+        $stmt->bind_param('s', $nim_nik);
         $stmt->execute();
-        $stmt->bind_result($hashed_password);
+        $stmt->bind_result($hashedPwd);
         $stmt->fetch();
         $stmt->close();
 
-        if ($hashed_password) {
-            if (password_verify($old_password, $hashed_password)) {
-                $new_hashed_password = password_hash($new_password, PASSWORD_BCRYPT);
-
-                $update_query = "UPDATE users SET password = ? WHERE nim_nik = ?";
-                $update_stmt = $conn->prepare($update_query);
-                $update_stmt->bind_param("ss", $new_hashed_password, $nim_nik);
-
-                if ($update_stmt->execute()) {
-                    $update_success = true;
-                    $success_message = "Password berhasil diubah.";
-                    echo "<script>alert('Password berhasil diubah!');window.location.href='data-dosen.php';</script>";
-                } else {
-                    $update_error = true;
-                    $error_message = "Terjadi kesalahan saat mengubah password.";
-                    echo "<script>alert('Terjadi kesalahan saat mengubah password!');window.location.href='data-dosen.php';</script>";
-                }
-
-                $update_stmt->close();
-            } else {
-                $update_error = true;
-                echo "<script>alert('Password lama salah!');window.location.href='data-dosen.php';</script>";
-                $error_message = "Password lama salah.";
-            }
+        if ($hashedPwd && password_verify($oldPwd, $hashedPwd)) {
+            $newHash = password_hash($newPwd, PASSWORD_BCRYPT);
+            $upd = $conn->prepare("UPDATE users SET password = ? WHERE nim_nik = ?");
+            $upd->bind_param('ss', $newHash, $nim_nik);
+            $formSuccess = $upd->execute() ? 'Password berhasil diubah.' : 'Gagal mengubah password.';
+            if (!$upd->execute()) $formError = 'Gagal mengubah password.';
         } else {
-            $update_error = true;
-            echo "<script>alert('Pengguna tidak ditemukan!');window.location.href='data-dosen.php';</script>";
-            $error_message = "Pengguna tidak ditemukan.";
+            $formError = 'Password lama salah.';
         }
     }
 }
+
+// Determine back URL
+$role = $_SESSION['role'] ?? '';
+$backUrl = match($role) {
+    'Admin' => 'dashboard-admin.php',
+    'Dosen' => '../dosen/dashboard-dosen.php',
+    default => '../mhs/dashboard-mahasiswa.php',
+};
 ?>
-
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="id">
 <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>Login Page</title>
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ganti Password — MBKM Polibatam</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="../assets/css/style-login.css" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css?v=<?= time(); ?>">
-    <script src="script.js?v=<?= time(); ?>"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Inter', sans-serif; }</style>
 </head>
+<body class="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <a href="<?= htmlspecialchars($backUrl) ?>" class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 mb-4 transition">
+            <i class="fas fa-arrow-left"></i> Kembali
+        </a>
 
-<body>
-    <div class="overlay">
-        <div class="login-container">
-            <img src="../assets/img/Logo MBKM.png" alt="Logo MBKM" class="img-fluid" />
-            <h3 class="text-center">Login</h3>
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="h-1.5 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
+            <div class="px-6 py-5 border-b border-gray-100">
+                <h2 class="text-lg font-bold text-gray-800">Ganti Password</h2>
+                <p class="text-sm text-gray-500 mt-0.5">Perbarui password akun Anda</p>
+            </div>
 
-            <!-- Form Login -->
-            <form method="POST" action="">
+            <form method="POST" action="" class="p-6 space-y-4">
+                <?php
+                function pwdField($id, $name, $placeholder) {
+                    echo "<div>
+                        <label class='block text-sm font-medium text-gray-700 mb-1.5'>{$placeholder}</label>
+                        <div class='relative'>
+                            <input type='password' id='{$id}' name='{$name}' required placeholder='{$placeholder}'
+                                class='w-full pl-3 pr-10 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition'>
+                            <button type='button' onclick=\"togglePwd('{$id}','icon_{$id}')\" tabindex='-1'
+                                class='absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600'>
+                                <i class='fas fa-eye text-sm' id='icon_{$id}'></i>
+                            </button>
+                        </div>
+                    </div>";
+                }
+                pwdField('oldpassword','oldpassword','Password Lama');
+                pwdField('newpassword','newpassword','Password Baru');
+                pwdField('confirmnewpassword','confirmnewpassword','Konfirmasi Password Baru');
+                ?>
+                <p class="text-xs text-gray-400">Password minimal 8 karakter.</p>
 
-                <div class="mb-3 position-relative d-flex flex-column">
-                    <input type="password" id="oldpassword" name="oldpassword" class="form-control" placeholder="Password Lama"
-                        required />
-                    <i class="fa fa-eye toggle-password" id="toggleOldPassword"></i>
+                <div class="flex gap-3 pt-2">
+                    <button type="submit"
+                        class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2">
+                        <i class="fas fa-key"></i> Ganti Password
+                    </button>
+                    <a href="<?= htmlspecialchars($backUrl) ?>"
+                        class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2">
+                        <i class="fas fa-times"></i> Batal
+                    </a>
                 </div>
-
-                <div class="mb-3 position-relative d-flex flex-column">
-                    <input type="password" id="newpassword" name="newpassword" class="form-control" placeholder="Password Baru"
-                        required />
-                    <i class="fa fa-eye toggle-password" id="toggleNewPassword"></i>
-                </div>
-
-                <div class="mb-3 position-relative d-flex flex-column">
-                    <input type="password" id="confirmnewpassword" name="confirmnewpassword" class="form-control" placeholder="Konfirmasi Password Baru"
-                        required />
-                    <i class="fa fa-eye toggle-password" id="togglePasswordConfirmPassword"></i>
-                </div>
-
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <a href="lupa-password.php" class="text-decoration-none text-primary">Lupa Password? </a>
-                </div>
-
-                <button type="submit" name="login" class="btn btn-primary w-100">Login</button>
-                <a href="registrasi.php" class="d-block text-center mt-3 text-decoration-none text-primary">Belum
-                    Punya Akun? Daftar</a>
             </form>
         </div>
     </div>
 
-    <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.getElementById('toggleOldPassword').addEventListener('click', function() {
-            const passwordField = document.getElementById('oldpassword');
-            const toggleIcon = document.getElementById('toggleOldPassword');
-            togglePasswordVisibility(passwordField, toggleIcon);
-        });
-
-        document.getElementById('toggleNewPassword').addEventListener('click', function() {
-            const passwordField = document.getElementById('newpassword');
-            const toggleIcon = document.getElementById('toggleNewPassword');
-            togglePasswordVisibility(passwordField, toggleIcon);
-        });
-
-        document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
-            const passwordField = document.getElementById('confirmnewpassword');
-            const toggleIcon = document.getElementById('toggleConfirmPassword');
-            togglePasswordVisibility(passwordField, toggleIcon);
-        });
-
-        function togglePasswordVisibility(passwordField, toggleIcon) {
-            if (passwordField.type === 'password') {
-                passwordField.type = 'text';
-                toggleIcon.classList.remove('fa-eye');
-                toggleIcon.classList.add('fa-eye-slash');
-            } else {
-                passwordField.type = 'password';
-                toggleIcon.classList.remove('fa-eye-slash');
-                toggleIcon.classList.add('fa-eye');
-            }
-        }
-    </script>
-
+<script>
+function togglePwd(fieldId, iconId) {
+    const f = document.getElementById(fieldId), i = document.getElementById(iconId);
+    if (f.type === 'password') { f.type = 'text'; i.classList.replace('fa-eye','fa-eye-slash'); }
+    else { f.type = 'password'; i.classList.replace('fa-eye-slash','fa-eye'); }
+}
+<?php if ($formError): ?>
+Swal.fire({ title:'Gagal!', text:'<?= addslashes(htmlspecialchars($formError)) ?>', icon:'error', confirmButtonColor:'#3b82f6' });
+<?php endif; ?>
+<?php if ($formSuccess): ?>
+Swal.fire({ title:'Berhasil!', text:'<?= addslashes(htmlspecialchars($formSuccess)) ?>', icon:'success', confirmButtonColor:'#3b82f6', timer:2000, showConfirmButton:false })
+    .then(() => { window.location.href = '<?= htmlspecialchars($backUrl) ?>'; });
+<?php endif; ?>
+</script>
 </body>
-
 </html>

@@ -1,0 +1,392 @@
+/* Modern UI Dashboard Global CSS */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary-color: #4F46E5;
+  --primary-hover: #4338CA;
+  --secondary-color: #10B981;
+  --danger-color: #EF4444;
+  --warning-color: #F59E0B;
+  --sidebar-bg: #111827;
+  --sidebar-hover: #1F2937;
+  --sidebar-text: #D1D5DB;
+  --sidebar-text-active: #FFFFFF;
+  --bg-color: #F3F4F6;
+  --card-bg: #FFFFFF;
+  --text-primary: #111827;
+  --text-secondary: #4B5563;
+  --border-color: #E5E7EB;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --transition: all 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  display: flex;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+/* ==================================
+   SIDEBAR
+   ================================== */
+.sidebar {
+  width: 260px;
+  background-color: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar .logo {
+  padding: 30px 20px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sidebar .logo img {
+  max-width: 80%;
+  height: auto;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+}
+
+.sidebar nav {
+  padding: 20px 15px;
+  flex-grow: 1;
+}
+
+.sidebar nav a {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: var(--transition);
+}
+
+.sidebar nav a:hover {
+  background-color: var(--sidebar-hover);
+  color: var(--sidebar-text-active);
+  transform: translateX(5px);
+}
+
+.sidebar nav a.active {
+  background-color: var(--primary-color);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.sidebar nav a .icon {
+  margin-right: 12px;
+  font-size: 1.1rem;
+  width: 20px;
+  text-align: center;
+}
+
+/* ==================================
+   CONTENT WRAPPER
+   ================================== */
+.content {
+  margin-left: 260px;
+  width: calc(100% - 260px);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==================================
+   HEADER
+   ================================== */
+.header {
+  background-color: var(--card-bg);
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 900;
+}
+
+.header h1, .header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* PROFILE / USER MENU */
+.user-menu {
+  position: relative;
+}
+
+.profile-icon img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary-color);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.profile-icon img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(79, 70, 229, 0.4);
+}
+
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 55px;
+  right: 0;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  width: 220px;
+  padding: 15px;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.dropdown.show {
+  display: block;
+}
+
+.dropdown span {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.dropdown button, .dropdown a.btn {
+  width: 100%;
+  padding: 10px 15px;
+  font-size: 0.9rem;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  text-align: left;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.dropdown button i, .dropdown a.btn i {
+  margin-right: 10px;
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.dropdown button:hover, .dropdown a.btn:hover {
+  background-color: var(--bg-color);
+  color: var(--primary-color);
+}
+
+.dropdown button:hover i, .dropdown a.btn:hover i {
+  color: var(--primary-color);
+}
+
+/* ==================================
+   MAIN CONTENT AREA (CARDS, TABLES)
+   ================================== */
+.container-fluid, .container {
+  padding: 30px;
+}
+
+.card {
+  background-color: var(--card-bg);
+  border-radius: var(--radius-lg);
+  border: none;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 25px;
+  transition: var(--transition);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+/* Beautiful Table Styling Overrides */
+.table-container {
+  background-color: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-md);
+  margin-top: 20px;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 0;
+}
+
+.table thead th {
+  background-color: var(--bg-color);
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  padding: 15px;
+  border-bottom: 2px solid var(--border-color);
+  border-top: none;
+}
+
+.table tbody td {
+  padding: 15px;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover {
+  background-color: rgba(243, 244, 246, 0.5);
+}
+
+/* Buttons */
+.btn {
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  padding: 0.5rem 1rem;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+}
+
+.btn-success {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.btn-success:hover {
+  background-color: #059669;
+  border-color: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+}
+
+.btn-sm {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+/* Form Controls */
+.form-control, .form-select {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  padding: 0.6rem 1rem;
+  font-size: 0.95rem;
+  transition: var(--transition);
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.form-label {
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+/* Status Badges */
+p.btn, span.badge {
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  letter-spacing: 0.025em;
+}
+
+.btn-warning {
+  background-color: #FEF3C7;
+  color: #D97706;
+  border: none;
+}
+
+.btn-success.btn-sm[style*="cursor: default"] {
+  background-color: #D1FAE5;
+  color: #059669;
+  border: none;
+}
+
+.btn-danger.btn-sm[style*="cursor: default"] {
+  background-color: #FEE2E2;
+  color: #DC2626;
+  border: none;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive DataTables adjustments */
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+  background: var(--primary-color) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: var(--radius-md) !important;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 4px 10px;
+  margin-left: 10px;
+}

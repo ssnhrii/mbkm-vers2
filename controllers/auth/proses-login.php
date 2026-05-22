@@ -39,13 +39,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $redirect_url = '../../views/mhs/dashboard-mahasiswa.php';
                     break;
                 case 'dosen':
-                    $redirect_url = 'dashboard-dosen.php';
+                    $redirect_url = '../../views/dosen/dashboard-dosen.php';
                     break;
                 case 'admin':
-                    $redirect_url = 'dashboard-admin.php';
+                    $redirect_url = '../../views/admin/dashboard-admin.php';
                     break;
                 default:
-                    $redirect_url = 'Dasbboard.php';
+                    $redirect_url = '../../views/auth/login.php';
             }
         } else {
             // Password salah

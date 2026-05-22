@@ -1,178 +1,111 @@
 <?php
-// Pastikan user sudah login dan memiliki role mahasiswa
 session_start();
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Dosen') {
-    header('Location: login.php');
-    exit();
+    header('Location: ../auth/login.php'); exit();
 }
-
-// Ambil data mahasiswa dari database
-include('../function/proses-dashboard.php');
-
+include '../../controllers/proses-dashboard.php';
+$pageTitle = 'Rekap Pengajuan';
+$activePage = 'rekap';
+$profileUrl = '../profil/profile.php';
+$changePasswordUrl = 'change-password.php?data=' . ($data['nim_nik'] ?? '');
 ?>
-
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>Polibatam Student Information System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <?php include '../partials/page-head.php'; ?>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <link rel="stylesheet" href="../assets/css/style-dashboard-mahasiswa.css" />
+    <style>
+        .dataTables_wrapper .dataTables_filter input,
+        .dataTables_wrapper .dataTables_length select {
+            border:1px solid #d1d5db; border-radius:0.5rem; padding:0.375rem 0.75rem; font-size:0.875rem;
+        }
+        table.dataTable thead th { background:#f9fafb; color:#374151; font-weight:600; font-size:0.75rem; text-transform:uppercase; }
+        table.dataTable tbody tr:hover { background:#eef2ff; }
+    </style>
 </head>
+<body class="bg-gray-100 min-h-screen">
+<div class="flex min-h-screen">
+    <?php include '../partials/sidebar-dosen.php'; ?>
 
-<body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="logo">
-            <img src="../assets/img/Logo MBKM.png" alt="Logo" />
-        </div>
-        <nav>
-            <a href="dashboard-dosen.php" class="dashboard active" onclick="activateMenu(this)">
-                <span class="icon"><i class="fas fa-home-alt"></i></span>
-                <span class="text">DASHBOARD</span>
-            </a>
-            <a href="persetujuan-pengajuan.php" class="persetujuan pengajuan" onclick="activateMenu(this)">
-                <span class="icon"><i class="fas fa-clipboard-check"></i></span>
-                <span class="text">PERSETUJUAN PENGAJUAN</span>
-            </a>
-            <a href="rekap-pengajuan-dosen.php" class="rekap pengajuan" onclick="activateMenu(this)">
-                <span class="icon"><i class="fas fa-file-signature"></i></span>
-                <span class="text">REKAP PENGAJUAN</span>
-            </a>
-        </nav>
-    </div>
+    <div class="flex-1 flex flex-col lg:ml-64 min-h-screen">
+        <?php include '../partials/header.php'; ?>
 
-    <!-- Main Content -->
-    <div class="content">
-        <!-- Header -->
-        <div class="header">
-            <h1>
-                Selamat Datang Di Sistem Informasi Dan Layanan Mahasiswa Polibatam
-            </h1>
-            <div class="user-menu">
-                <!-- Profile Icon -->
-                <div class="profile-icon" onclick="toggleDropdown()">
-                    <img src="../assets/img/icon.jpg" alt="Profile Icon" />
-                </div>
-                <!-- Dropdown Menu -->
-                <div class="dropdown" id="dropdownMenu">
-                    <span><br />Nama: <?php echo $data['nama_lengkap']; ?></span>
-                    <a href="profile.php"><button><i class="fas fa-user"></i> Profile</button></a>
-                    <a href="change-password.php?data=<?php echo $data['nim_nik'] ?>">
-                        <button><i class="fas fa-key"></i> Change Password</button>
-                    </a>
-                    <a href="../function/logout.php"><button><i class="fas fa-sign-out-alt"></i> Logout</button></a>
+        <main class="flex-1 p-6">
+            <div class="mb-6">
+                <h2 class="text-xl font-bold text-gray-800">Rekap Pengajuan MBKM</h2>
+                <p class="text-sm text-gray-500 mt-0.5">Ringkasan semua pengajuan mahasiswa</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table id="rekapTable" class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-gray-50 border-b border-gray-200">
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">NIM/NIK</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Nama</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Prodi</th>
+                                <th class="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase">Jml Pengajuan</th>
+                                <th class="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase">Tanggal</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Jenis Program</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                        <?php
+                        $sql = "SELECT u.nim_nik, u.nama_lengkap, p.nama_prodi,
+                                    GROUP_CONCAT(DISTINCT n.jenis_program ORDER BY n.created_at DESC SEPARATOR '||') AS jenis_program,
+                                    GROUP_CONCAT(DATE_FORMAT(n.created_at,'%d/%m/%Y') ORDER BY n.created_at DESC SEPARATOR '||') AS tanggal_pengajuan,
+                                    COUNT(n.id_pengajuan) AS jumlah_pengajuan
+                                FROM users u
+                                INNER JOIN pengajuan_usulan n ON u.nim_nik = n.nim_nik
+                                LEFT JOIN prodi p ON u.id_prodi = p.id_prodi
+                                GROUP BY u.nim_nik, u.nama_lengkap, p.nama_prodi";
+                        $result = $conn->query($sql);
+                        if ($result && $result->num_rows > 0):
+                            while ($row = $result->fetch_assoc()):
+                                $tanggals = explode('||', $row['tanggal_pengajuan']);
+                                $jeniss   = explode('||', $row['jenis_program']);
+                        ?>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-4 py-3 font-mono text-xs text-gray-600"><?= htmlspecialchars($row['nim_nik']) ?></td>
+                            <td class="px-4 py-3 font-medium text-gray-800"><?= htmlspecialchars($row['nama_lengkap']) ?></td>
+                            <td class="px-4 py-3">
+                                <span class="inline-block bg-indigo-50 text-indigo-700 text-xs px-2 py-0.5 rounded-full font-medium">
+                                    <?= htmlspecialchars($row['nama_prodi'] ?? '—') ?>
+                                </span>
+                            </td>
+                            <td class="px-4 py-3 text-center">
+                                <span class="inline-block bg-gray-100 text-gray-700 text-xs font-bold px-2.5 py-1 rounded-full">
+                                    <?= $row['jumlah_pengajuan'] ?>
+                                </span>
+                            </td>
+                            <td class="px-4 py-3 text-center text-xs text-gray-500">
+                                <?= implode('<br>', array_map('htmlspecialchars', $tanggals)) ?>
+                            </td>
+                            <td class="px-4 py-3 text-xs text-gray-700">
+                                <?php foreach ($jeniss as $j): ?>
+                                <span class="inline-block bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full mb-0.5 font-medium">
+                                    <?= htmlspecialchars($j) ?>
+                                </span><br>
+                                <?php endforeach; ?>
+                            </td>
+                        </tr>
+                        <?php endwhile; else: ?>
+                        <tr><td colspan="6" class="px-4 py-8 text-center text-gray-400">Belum ada data pengajuan.</td></tr>
+                        <?php endif; ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </div>
+        </main>
+    </div>
+</div>
 
-        <!-- Daftar Dosen -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5>Daftar Pengajuan</h5>
-        </div>
-
-        <div class="table-container">
-            <table id="dosenTable" class="table table-striped">
-                <thead>
-                    <tr>
-                        <th class='text-center'>NIM/NIK</th>
-                        <th class='text-center'>Nama</th>
-                        <th class='text-center'>Program Studi</th>
-                        <th class='text-center'>Jumlah Pengajuan</th>
-                        <th class='text-center'>Tanggal Pengajuan</th>
-                        <th class='text-center'>Jenis Program</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $sql = "
-SELECT 
-    u.nim_nik, 
-    u.nama_lengkap, 
-    p.nama_prodi, 
-    GROUP_CONCAT(DISTINCT n.jenis_program ORDER BY n.created_at DESC SEPARATOR ', ') AS jenis_program,
-    GROUP_CONCAT(DATE_FORMAT(n.created_at, '%d/%m/%y %H:%i:%s') ORDER BY n.created_at DESC SEPARATOR ', ') AS tanggal_pengajuan, 
-    COUNT(n.id_pengajuan) AS jumlah_pengajuan
-FROM 
-    users u
-INNER JOIN 
-    pengajuan_usulan n ON u.nim_nik = n.nim_nik
-LEFT JOIN 
-    prodi p ON u.id_prodi = p.id_prodi
-GROUP BY 
-    u.nim_nik, u.nama_lengkap, p.nama_prodi
-LIMIT 10;
-";
-                    $stmt = $conn->prepare($sql);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-
-                    // Cek apakah data tersedia
-                    if ($result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
-                            echo "<tr>";
-                                echo "<td class='text-center'>" . htmlspecialchars($row['nim_nik']) . "</td>";
-                                echo "<td class='text-center'>" . htmlspecialchars($row['nama_lengkap']) . "</td>";
-                                echo "<td class='text-center'>" . htmlspecialchars($row['nama_prodi']) . "</td>";
-                                echo "<td class='text-center'>" . htmlspecialchars($row['jumlah_pengajuan']) . "</td>";
-                                echo "<td class='text-center'>";
-                                $tanggal_pengajuan = $row['tanggal_pengajuan'];
-                                $tanggal_array = explode(', ', $tanggal_pengajuan);
-                                foreach ($tanggal_array as $tanggal) {
-                                    echo date("d/m/y", strtotime($tanggal)) . "<br>";
-                                }
-                                echo "</td>";
-                                $jenis_array = explode(', ', $row['jenis_program']);
-                                echo"<td class='text-center'>";
-                                foreach ($jenis_array as $jenis) {
-                                    echo"$jenis" . "<br>";
-                                }
-                                    echo"</td>";
-                            echo "</tr>";
-                        }
-                    } else {
-                        echo "<tr><td colspan='6' class='text-center'>ANDA BELUM MELAKUKAN PENGAJUAN...</td></tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
-
-        <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-        <script>
-            $(document).ready(function () {
-                $('#pengajuanTable').DataTable();
-            })
-            function toggleDropdown() {
-                const dropdown = document.getElementById("dropdownMenu");
-                dropdown.classList.toggle("show");
-            }
-
-            window.onclick = function (event) {
-                if (!event.target.matches(".profile-icon img")) {
-                    const dropdown = document.getElementById("dropdownMenu");
-                    if (dropdown.classList.contains("show")) {
-                        dropdown.classList.remove("show");
-                    }
-                }
-            };
-
-            function activateMenu(element) {
-                document.querySelectorAll(".sidebar nav a").forEach((menu) => {
-                    menu.classList.remove("active");
-                });
-                element.classList.add("active");
-            }
-        </script>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#rekapTable').DataTable({ language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/id.json' } });
+});
+</script>
 </body>
-
 </html>

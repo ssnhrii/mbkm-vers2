@@ -1,21 +1,18 @@
 <?php
-include 'koneksi.php'; // Pastikan Anda menyertakan file koneksi database
+include 'koneksi.php';
 
-// Memastikan nim_nik ada dalam URL dan merupakan angka valid
+// Memastikan nim_nik ada dalam URL
 if (isset($_GET['nim_nik'])) {
-    // Mengambil nilai nim_nik dari parameter URL
     $nim_nik = $_GET['nim_nik'];
 
-    // Query untuk mengambil data mahasiswa
     $query = "SELECT nama_lengkap, nim_nik, id_prodi FROM users WHERE nim_nik = ?";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("s", $nim_nik); // Gunakan "s" karena nim_nik mungkin berupa string
+    $stmt->bind_param("s", $nim_nik);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
         $data = $result->fetch_assoc();
-        // Data mahasiswa ditemukan
     } else {
         echo "Data mahasiswa tidak ditemukan.";
         exit();
@@ -25,65 +22,92 @@ if (isset($_GET['nim_nik'])) {
     exit();
 }
 
-// Simpan data formulir ke database jika metode permintaan adalah POST
+// Proses update jika POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Validasi data dari formulir
-    $dosenPembimbing = $_POST['dosenPembimbing'] ?? '';
-    $program = $_POST['program'] ?? '';
-    $alasan = $_POST['alasan'] ?? '';
-    $judulProgram = $_POST['judulProgram'] ?? '';
-    $namaLembaga = $_POST['namaLembaga'] ?? '';
-    $durasi = $_POST['durasi'] ?? '';
-    $posisi = $_POST['posisi'] ?? '';
-    $rincian = $_POST['rincian'] ?? '';
+    $dosenPembimbing  = $_POST['dosenPembimbing']           ?? '';
+    $program          = $_POST['program']                    ?? '';
+    $alasan           = $_POST['alasan']                     ?? '';
+    $judulProgram     = $_POST['judulProgram']               ?? '';
+    $namaLembaga      = $_POST['namaLembaga']                ?? '';
+    $durasi           = $_POST['durasi']                     ?? '';  // digabung JS
+    $posisi           = $_POST['posisi']                     ?? null;
+    $rincian          = $_POST['rincian']                    ?? '';
 
-    // Data tambahan untuk program tertentu
-    $sumberPendanaan = $_POST['sumberPendanaan'] ?? null;
-    $jumlahAnggota = $_POST['jumlahAnggota'] ?? null;
-    $namaAnggota = $_POST['namaAnggota'] ?? null;
+    $sumberPendanaan  = $_POST['sumberPendanaan']            ?? null;
+    $jumlahAnggota    = $_POST['jumlahAnggota']              ?? null;
+    $namaAnggota      = $_POST['namaAnggota']                ?? null;
 
-    $jenisPertukaran = $_POST['jenisPertukaran'] ?? null;
-    $prodiTujuan = $_POST['prodiTujuan'] ?? null;
-    $mataKuliah = $_POST['mataKuliah'] ?? [];
+    $jenisPertukaran  = $_POST['jenisPertukaran']            ?? null;
+    $prodiTujuan      = $_POST['prodiTujuan']                ?? null;
+    $mataKuliahString = $_POST['mataKuliahPertukaranString'] ?? '';
+    $klaimMataKuliah  = $_POST['klaimMataKuliahString']      ?? null;
 
-    // Validasi data wajib
-    if (empty($dosenPembimbing) || empty($program) || empty($alasan) || empty($judulProgram) || empty($namaLembaga) || empty($durasi) || empty($posisi) || empty($rincian)) {
-        echo "Semua bidang wajib harus diisi.";
+    // Validasi wajib
+    if (
+        empty($dosenPembimbing) || empty($program) || empty($alasan) ||
+        empty($judulProgram)    || empty($namaLembaga) ||
+        empty($durasi)          || empty($rincian)
+    ) {
+        echo "<script>Swal.fire({title:'Validasi Gagal',text:'Semua bidang wajib harus diisi.',icon:'warning',confirmButtonColor:'#3b82f6'}).then(()=>history.back());</script>";
         exit();
     }
 
-    // Membuat query SQL dengan langsung menyisipkan data variabel
-    $mataKuliahString = implode(",", $mataKuliah); // Konversi array mataKuliah menjadi string
+    // Posisi wajib untuk Magang
+    if ($program === 'Magang Praktik Kerja' && empty($posisi)) {
+        echo "<script>Swal.fire({title:'Validasi Gagal',text:'Posisi di perusahaan wajib diisi untuk Magang Praktik Kerja (MSIB).',icon:'warning',confirmButtonColor:'#3b82f6'}).then(()=>history.back());</script>";
+        exit();
+    }
+
     $statusPengajuan = "Menunggu Persetujuan";
-    $id_pengajuan = $_GET['data'];
+    $id_pengajuan    = $_GET['data'];
 
-    $sql = "UPDATE pengajuan_usulan 
-            SET 
-                dosen_pembimbing = '$dosenPembimbing', 
-                jenis_program = '$program', 
-                alasan_memilih_program = '$alasan', 
-                judul_program = '$judulProgram', 
-                nama_mitra = '$namaLembaga', 
-                durasi_kegiatan = '$durasi', 
-                posisi_di_perusahaan = '$posisi', 
-                rincian_kegiatan = '$rincian', 
-                sumber_pendanaan = '$sumberPendanaan', 
-                jumlah_anggota = '$jumlahAnggota', 
-                nama_anggota = '$namaAnggota', 
-                jenis_pertukaran_pelajar = '$jenisPertukaran', 
-                nama_program_studi = '$prodiTujuan', 
-                status_pengajuan = '$statusPengajuan', 
-                created_at = NOW(), 
-                nama_mata_kuliah_jumlah_sks = '$mataKuliahString' 
-            WHERE id_pengajuan = '$id_pengajuan'";
+    $sql = "UPDATE pengajuan_usulan SET
+                dosen_pembimbing          = ?,
+                jenis_program             = ?,
+                alasan_memilih_program    = ?,
+                judul_program             = ?,
+                nama_mitra                = ?,
+                durasi_kegiatan           = ?,
+                posisi_di_perusahaan      = ?,
+                rincian_kegiatan          = ?,
+                sumber_pendanaan          = ?,
+                jumlah_anggota            = ?,
+                nama_anggota              = ?,
+                jenis_pertukaran_pelajar  = ?,
+                nama_program_studi        = ?,
+                nama_mata_kuliah_jumlah_sks = ?,
+                klaim_mata_kuliah         = ?,
+                status_pengajuan          = ?,
+                created_at                = NOW()
+            WHERE id_pengajuan = ?";
 
-    // Eksekusi query
-    if ($conn->query($sql) === TRUE) {
-        // Berhasil disimpan, arahkan ke halaman menunggu persetujuan
-        header("Location: ../view/dashboard-mahasiswa.php");
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param(
+        "ssssssssssssssssi",
+        $dosenPembimbing,
+        $program,
+        $alasan,
+        $judulProgram,
+        $namaLembaga,
+        $durasi,
+        $posisi,
+        $rincian,
+        $sumberPendanaan,
+        $jumlahAnggota,
+        $namaAnggota,
+        $jenisPertukaran,
+        $prodiTujuan,
+        $mataKuliahString,
+        $klaimMataKuliah,
+        $statusPengajuan,
+        $id_pengajuan
+    );
+
+    if ($stmt->execute()) {
+        header("Location: ../views/mhs/rekap-pengajuan.php?nim_nik=" . urlencode($nim_nik));
         exit();
     } else {
-        echo "Terjadi kesalahan: " . $conn->error;
+        echo "Terjadi kesalahan: " . $stmt->error;
     }
 }
 ?>

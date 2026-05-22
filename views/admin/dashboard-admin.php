@@ -1,155 +1,83 @@
 <?php
-// Pastikan user sudah login dan memiliki role admin
 session_start();
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Admin') {
-    header('Location: login.php');
-    exit();
+    header('Location: ../auth/login.php'); exit();
 }
-
-// Ambil data mahasiswa dari database
-include('../function/proses-dashboard.php');
-
+include '../../controllers/proses-dashboard.php';
+$pageTitle = 'Dashboard Admin';
+$activePage = 'dashboard';
+$profileUrl = '../profil/profile.php';
+$changePasswordUrl = 'change-password.php?data=' . ($data['nim_nik'] ?? '');
 ?>
-
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>Polibatam Student Information System</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <link rel="stylesheet" href="../assets/css/style-dashboard-admin.css" />
-    <link rel="stylesheet" href="style.css?v=<?= time(); ?>">
-    <script src="script.js?v=<?= time(); ?>"></script>
+    <?php include '../partials/page-head.php'; ?>
 </head>
+<body class="bg-gray-100 min-h-screen">
+<div class="flex min-h-screen">
+    <?php include '../partials/sidebar-admin.php'; ?>
 
-<body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="logo">
-            <img src="../assets/img/Logo MBKM.png" alt="Logo" />
-        </div>
-        <nav>
-            <a href="dashboard-mahasiswa.php" class="dashboard active" onclick="activateMenu(this)">
-                <span class="icon"><i class="fas fa-home-alt"></i></span>
-                <span class="text">DASHBOARD</span>
-            </a>
-            <a href="data-dosen.php" class="pengajuan" onclick="activateMenu(this)">
-                <span class="icon"><i class="fas fa-file-alt"></i></span>
-                <span class="text">MANAJEMEN USER</span>
-            </a>
-        </nav>
-    </div>
+    <!-- Main -->
+    <div class="flex-1 flex flex-col lg:ml-64 min-h-screen">
+        <?php include '../partials/header.php'; ?>
 
-    <!-- Main Content -->
-    <div class="content">
-        <!-- Header -->
-        <div class="header">
-            <h1>
-                Selamat Datang Di Sistem Informasi Dan Layanan Mahasiswa Polibatam
-            </h1>
-            <div class="user-menu">
-                <!-- Profile Icon -->
-                <div class="profile-icon" onclick="toggleDropdown()">
-                    <img src="../assets/img/icon.jpg" alt="Profile Icon" />
+        <main class="flex-1 p-6">
+            <!-- Welcome Banner -->
+            <div class="bg-gradient-to-r from-emerald-600 to-teal-500 rounded-2xl p-6 text-white mb-6 shadow-md">
+                <h2 class="text-xl font-bold mb-1">Selamat Datang, <?= htmlspecialchars($data['nama_lengkap']) ?>!</h2>
+                <p class="text-emerald-100 text-sm">Panel Admin — Sistem Informasi MBKM Politeknik Negeri Batam</p>
+            </div>
+
+            <!-- Profile Card -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="bg-emerald-50 border-b border-emerald-100 px-6 py-4 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold text-lg">
+                        <?= strtoupper(substr($data['nama_lengkap'] ?? 'A', 0, 1)) ?>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-800"><?= htmlspecialchars($data['nama_lengkap']) ?></p>
+                        <span class="inline-block text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">
+                            <?= htmlspecialchars($data['role']) ?>
+                        </span>
+                    </div>
                 </div>
-                <!-- Dropdown Menu -->
-                <div class="dropdown" id="dropdownMenu">
-                    <span><br />Nama: <?php echo $data['nama_lengkap']; ?></span>
-                    <a href="profile.php"><button><i class="fas fa-user"></i> Profile</button></a>
-                    <a href="change-password.php?data=<?php echo $data['nim_nik'] ?>">
-                        <button><i class="fas fa-key"></i> Change Password</button>
-                    </a>
-                    <a href="../function/logout.php"><button><i class="fas fa-sign-out-alt"></i> Logout</button></a>
+                <div class="p-6">
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Informasi Akun</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <?php
+                        $fields = [
+                            'NIM / NIK'      => $data['nim_nik'],
+                            'Username'       => $data['username'],
+                            'Nama Lengkap'   => $data['nama_lengkap'],
+                            'Email'          => $data['email'],
+                            'No. Handphone'  => $data['phone'],
+                            'Alamat'         => $data['alamat'],
+                            'Program Studi'  => $prodi,
+                            'Role'           => $data['role'],
+                        ];
+                        foreach ($fields as $label => $value): ?>
+                        <div class="flex flex-col gap-0.5">
+                            <span class="text-xs text-gray-400 font-medium"><?= $label ?></span>
+                            <span class="text-sm text-gray-800 font-medium"><?= htmlspecialchars($value ?? '—') ?></span>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <div class="mt-6 flex gap-3">
+                        <a href="<?= htmlspecialchars($profileUrl) ?>"
+                            class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+                            <i class="fas fa-user-edit"></i> Edit Profil
+                        </a>
+                        <a href="data-dosen.php"
+                            class="inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg transition">
+                            <i class="fas fa-users-cog"></i> Manajemen User
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Welcome Message -->
-        <div class="welcome">Anda dapat menikmati layanan secara online</div>
-
-        <!-- Information Box -->
-        <div class="info">
-            Silahkan lakukan update data diri terlebih dahulu di menu PROFILE atau
-            <a href="profile.php">KLIK DISINI</a> sebelum melakukan pengajuan, sebagai
-            pemutakhiran data untuk berbagai kebutuhan. Terima Kasih
-        </div>
-
-        <!-- Student Data -->
-        <div class="student-data">
-            <img src="../assets/img/stickman.jpeg" alt="Student Photo" />
-            <div class="student-details">
-                <h2>DATA MAHASISWA</h2>
-                <div class="details-row">
-                    <span class="label">NIM</span>
-                    <span class="separator">:</span>
-                    <span class="value"><?php echo $data['nim_nik']; ?></span>
-                </div>
-                <div class="details-row">
-                    <span class="label">Username</span>
-                    <span class="separator">:</span>
-                    <span class="value"><?php echo $data['username']; ?></span>
-                </div>
-                <div class="details-row">
-                    <span class="label">Nama Lengkap</span>
-                    <span class="separator">:</span>
-                    <span class="value"><?php echo $data['nama_lengkap']; ?></span>
-                </div>
-                <div class="details-row">
-                    <span class="label">Email</span>
-                    <span class="separator">:</span>
-                    <span class="value"><?php echo $data['email']; ?></span>
-                </div>
-                <div class="details-row">
-                    <span class="label">No. Handphone</span>
-                    <span class="separator">:</span>
-                    <span class="value"><?php echo $data['no_handphone']; ?></span>
-                </div>
-                <div class="details-row">
-                    <span class="label">Alamat</span>
-                    <span class="separator">:</span>
-                    <span class="value"><?php echo $data['alamat']; ?></span>
-                </div>
-                <div class="details-row">
-                    <span class="label">Prodi</span>
-                    <span class="separator">:</span>
-                    <span class="value"><?php echo $prodi; ?></span>
-                </div>
-                <div class="details-row">
-                    <span class="label">Role</span>
-                    <span class="separator">:</span>
-                    <span class="value"><?php echo $data['role']; ?></span>
-                </div>
-            </div>
-        </div>
+        </main>
     </div>
-
-    <script>
-        function toggleDropdown() {
-            const dropdown = document.getElementById("dropdownMenu");
-            dropdown.classList.toggle("show");
-        }
-
-        window.onclick = function(event) {
-            if (!event.target.matches(".profile-icon img")) {
-                const dropdown = document.getElementById("dropdownMenu");
-                if (dropdown.classList.contains("show")) {
-                    dropdown.classList.remove("show");
-                }
-            }
-        };
-
-        function activateMenu(element) {
-            document.querySelectorAll(".sidebar nav a").forEach((menu) => {
-                menu.classList.remove("active");
-            });
-            element.classList.add("active");
-        }
-    </script>
+</div>
 </body>
-
 </html>
+
